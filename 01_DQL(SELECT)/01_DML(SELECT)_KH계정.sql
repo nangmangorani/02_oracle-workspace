@@ -269,7 +269,7 @@ WHERE HIRE_DATE BETWEEN '90-01-01' AND '01-01-01';
     
     - 특정패턴 제시시 '%', '_' 를 와일드카드로 사용할 수 있음
     
-    >> '%' : 0글자 이상ㄷㄷ
+    >> '%' : 0글자 이상
     
     EX) 비교대상컬럼 LIKE '문자%' => 비교대상의 컬럼값이 문자로 시작되는걸 조회
         비교대상컬럼 LIKE '%문자' => 비교대상의 컬럼값이 문자로 끝나는걸 조회
@@ -323,7 +323,7 @@ WHERE EMAIL LIKE '____%'; -- 원했던 결과 도출 못함!
 
 SELECT EMP_ID, EMP_NAME, EMAIL
 FROM EMPLOYEE
-WHERE EMAIL LIKE '___$_%' ESCAPE '$';
+WHERE EMAIL LIKE '___#_%' ESCAPE '#';
 
 --------------------------------실습문제-------------------------------
 -- 1. EMPLOYEE 테이블에서 이름이 '연'으로 끝나는 사원들의 사원명, 입사일 조회
@@ -342,7 +342,7 @@ FROM EMPLOYEE
 WHERE EMP_NAME LIKE '%하%' AND SALARY >= 2400000;
 
 -- 4. DEPARTMENT 테이블에서 해외영업부 부서들의 코드, 부서명을 조회
-SELECT DEPT_ID, DEPT_TITLE
+SELECT DEPT_ID, DEPT_TITLE 
 FROM DEPARTMENT
 WHERE DEPT_TITLE LIKE '해외영업%';
 
