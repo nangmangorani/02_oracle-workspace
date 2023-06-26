@@ -20,6 +20,8 @@ CREATE USER kh IDENTIFIED BY kh; -- 계정명은 대소문자 안가림
 -- [표현법] GRANT로 권한1, 권한2 .. TO 계정명
 GRANT RESOURCE, CONNECT TO KH;
 
+CREATE USER scott IDENTIFIED BY tiger;
+GRANT RESOURCE, CONNECT TO scott;
 
 
 
