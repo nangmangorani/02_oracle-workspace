@@ -126,9 +126,6 @@ HAVING SUM(SALARY) = (SELECT MAX(SUM(SALARY))
 
 -- 오라클 전용 구문
     
-    
-   
-
     SELECT EMP_ID, EMP_NAME, PHONE, HIRE_DATE, DEPT_TITLE
     FROM EMPLOYEE, DEPARTMENT
     WHERE DEPT_CODE = DEPT_ID 
@@ -310,6 +307,93 @@ SELECT EMP_NO, EMP_NAME, 연봉, DEPT_CODE -- MANAGER_ID는 오류남
 FROM (SELECT EMP_NO, EMP_NAME, (SALARY + SALARY * NVL(BONUS,0))*12 AS "연봉", DEPT_CODE
 FROM EMPLOYEE) -- 1
 WHERE 연봉 >= 30000000;
+
+-- 인라인뷰를 주로 사용하는 예 => TOP-N 분석 (상위 몇개만 보여주고싶을떼 => BEST상품)
+
+-- 전 직원중 급여가 가장 높은 상위 5명만 조회
+-- ROWNUM : 오라클 제공해주는 컬럼, 조회된 순서대로 1부터 순번을 부여해주는 컬럼
+
+
+SELECT ROWNUM, EMP_NAME, SALARY
+FROM EMPLOYEE
+ORDER BY SALARY DESC;
+-- FROM -> SELECT ROWNUM(이때 순번이 부여됨, 정렬하기전에 이미 순번 부여)
+-- 실행순서때매 ROWNUM 좀 이상함
+
+SELECT ROWNUM, EMP_NAME, SALARY
+FROM EMPLOYEE
+WHERE ROWNUM <= 5
+ORDER BY SALARY DESC;
+-- 정상적인 결과가 조회되지 안흠!(정렬 되기 전에 5명 추려지고나서 정렬됨)
+
+-- ORDER BY 절이 다 수행된 결과를 가지고 ROWNUM을 부여하고 5명을 추린다.
+SELECT EMP_NAME, SALARY, DEPT_CODE
+FROM EMPLOYEE
+ORDER BY SALARY DESC;
+
+SELECT ROWNUM, --EMP_NAME, SALARY
+FROM (SELECT *--EMP_NAME, SALARY, DEPT_CODE
+      FROM EMPLOYEE
+      ORDER BY SALARY DESC)
+WHERE ROWNUM <= 5;
+
+-- ROWNUM이랑 전체컬럼 조회하고 싶음 => 별칭부여하는 방법으로
+SELECT ROWNUM, E.*--EMP_NAME, SALARY
+FROM (SELECT *--EMP_NAME, SALARY, DEPT_CODE
+      FROM EMPLOYEE
+      ORDER BY SALARY DESC) E
+WHERE ROWNUM <= 5;
+
+-- 1. 가장 최근에 입사한 사원 5명 조회 (사원명, 급여, 입사일)
+
+SELECT ROWNUM, EMP_NAME, SALARY, HIRE_DATE
+FROM (SELECT *
+      FROM EMPLOYEE
+      ORDER BY HIRE_DATE DESC)
+WHERE ROWNUM <=5;
+
+-- 2. 부서별 평균 급여가 높은 3개 부서 조회 (부서코드, 평균급여)
+SELECT ROWNUM, DEPT_CODE, FLOOR("평균급여")
+FROM (SELECT DEPT_CODE, AVG(SALARY) AS "평균급여"
+      FROM EMPLOYEE
+      GROUP BY DEPT_CODE
+      ORDER BY AVG(SALARY) DESC)
+WHERE ROWNUM<=3;
+--------------------------------------------------------------------------------
+/*
+    순위 매기는 함수(WINDOW FUNCTION)
+    RANK() OVER(정렬기준)           |       DENSE_RANK() OVER(정렬기준)
+    
+    - RANK() OVER(정렬기준) : 동일한 순위 이후의 등수를 동일한 인원수 만큼 건너뛰고 순위 계산
+                            EX) 공동 1위가 2명 다음은 3위 => 1 1 3
+    - DENSE_RANK() OVER(정렬기준) : 동일한 순위가 있다해도 그 다음 등수를 무조건 1씩 증가 시킴
+                            EX) 공동 1위 2명이더라도 다음순위 2위
+    >> 두 함수는 무조건 SELECT절에서만 사용 가능
+*/    
+
+-- 급여가 높은 순대로 순위 매기기
+SELECT EMP_NAME, SALARY, RANK() OVER(ORDER BY SALARY DESC) AS "순위"
+FROM EMPLOYEE;
+-- 공동 19위 2명 그 뒤의 순위는 21 => 마지막 순위랑 조회된 행수랑 같음
+
+SELECT EMP_NAME, SALARY, DENSE_RANK() OVER(ORDER BY SALARY DESC) AS "순위"
+FROM EMPLOYEE;
+-- 공동 19위 2명 뒤의 순위는 20 => 마지막 순위랑 조회된 행수가 다름
+
+-- 상위 5명만 조회
+SELECT EMP_NAME, SALARY, RANK() OVER(ORDER BY SALARY DESC) AS "순위"
+FROM EMPLOYEE;
+--WHERE 순위 <= 5; 순번때매 안되지 ㅋㅋ
+--WHERE RANK() OVER(ORDER BY SALARY DESC) <= 5;
+
+-- 인라인뷰를 쓸 수 밖에 없는 구조
+SELECT *
+FROM (SELECT EMP_NAME, SALARY, RANK() OVER(ORDER BY SALARY DESC) AS "순위"
+      FROM EMPLOYEE)
+WHERE 순위 <= 5;
+
+
+
 
 
 
