@@ -308,7 +308,7 @@ FROM (SELECT EMP_NO, EMP_NAME, (SALARY + SALARY * NVL(BONUS,0))*12 AS "연봉", DE
 FROM EMPLOYEE) -- 1
 WHERE 연봉 >= 30000000;
 
--- 인라인뷰를 주로 사용하는 예 => TOP-N 분석 (상위 몇개만 보여주고싶을떼 => BEST상품)
+-- 인라인뷰를 주로 사용하는 예 => TOP-N 분석 (상위 몇개만 보여주고싶을때 => BEST상품)
 
 -- 전 직원중 급여가 가장 높은 상위 5명만 조회
 -- ROWNUM : 오라클 제공해주는 컬럼, 조회된 순서대로 1부터 순번을 부여해주는 컬럼
@@ -324,7 +324,7 @@ SELECT ROWNUM, EMP_NAME, SALARY
 FROM EMPLOYEE
 WHERE ROWNUM <= 5
 ORDER BY SALARY DESC;
--- 정상적인 결과가 조회되지 안흠!(정렬 되기 전에 5명 추려지고나서 정렬됨)
+-- 정상적인 결과가 조회되지 않음(정렬 되기 전에 5명 추려지고나서 정렬됨)
 
 -- ORDER BY 절이 다 수행된 결과를 가지고 ROWNUM을 부여하고 5명을 추린다.
 SELECT EMP_NAME, SALARY, DEPT_CODE
