@@ -5,7 +5,7 @@
     DDL (DEFINITION 데이터 정의 언어) : CREATE, ALTER, DROP 
     DCL (CONTROL 데이터 제어 언어) : GRANT, REVOKE, [COMMIT, ROLLBACK]
     
-    TCL (TRANSACTION 트랜젝슨 제어 언어) : COMMIT, ROLLBACK
+    TCL (TRANSACTION 트랜젝션 제어 언어) : COMMIT, ROLLBACK
 
     < DML : DATA MANIPULATION LANGUAGE >
     데이터 조작 언어
