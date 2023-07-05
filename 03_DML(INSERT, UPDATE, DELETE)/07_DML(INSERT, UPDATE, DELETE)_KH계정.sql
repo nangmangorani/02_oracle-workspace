@@ -39,7 +39,7 @@ SELECT * FROM EMPLOYEE;
     그래도 한 행 단위로 추가되기 때문에
     선택이 안된 컬럼은 기본적으로는 NULL이 들어감!
     => NOT NULL 제약조건이 걸려있는 컬럼은 반드시 선택해서 직접 값 제시해야함!
-    단, DEFAULT 값이 있는 경우는 NULL이 아닌 DEFAULT 값이 들어간다!
+    단, DFAULT 값이 있는 경우는 NULL이 아닌 DEFAULT 값E이 들어간다!
     
 */
 
