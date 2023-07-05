@@ -30,21 +30,3 @@ SELECT * FROM DEPARTMENT;
 DELETE FROM DEPARTMENT
 WHERE DEPT_ID = 'D0';
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
