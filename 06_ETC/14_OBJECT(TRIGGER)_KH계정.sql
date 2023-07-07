@@ -125,47 +125,62 @@ VALUES(SEQ_DCODE.NEXTVAL, 205, SYSDATE, 20, '입고');
 -- 205번 상품의 재고수량 20 증가
 UPDATE TB_PRODUCT
 SET STOCK = STOCK + 20
-WHERE PCODE = 200; -- 잘못 오기입했을 때..
+WHERE PCODE = 205; -- 잘못 오기입했을 때..
 
 ROLLBACK;
+COMMIT;
+
+-- TB_PRODETAIL 테이블에 INSERT 이벤트 발생시
+-- TB_PRODUCT 테이블에 매번 자동으로 재고수량 UPDATE 되게끔 트리거 정의
+
+/*
+    -- 상품이 입고된 경우 => 해당 상품 찾아서 재고수량 증가 UPDATE
+    UPDATE TB_PRODUCT
+    SET STOCK = STOCK + 현재입고된수량(INSERT된 자료의 AMOUNT값)
+    WHERE PCODE = 입고된 상품번호(INSERT된 자료의 PCODE값);
+    
+    
+    
+    
+    -- 상품이 출고된 경우 => 해당 상품 찾아서 재고수량 감소 UPDATE
+    UPDATE TB_PRODUCT
+    SET STOCK = STOCK - 현재입고된수량(INSERT된 자료의 AMOUNT값)
+    WHERE PCODE = 출고된 상품번호(INSERT된 자료의 PCODE값);
+*/
+
+-- : NEW 써야함
+
+CREATE OR REPLACE TRIGGER TRG_02
+AFTER INSERT ON TB_PRODETAIL
+FOR EACH ROW
+BEGIN
+    -- 상품이 입고된 경우 => 재고수량 증가
+    IF(:NEW.STATUS = '입고')
+        THEN 
+            UPDATE TB_PRODUCT
+            SET STOCK = STOCK + :NEW.AMOUNT
+            WHERE PCODE = :NEW.PCODE;
+    END IF;
+    
+    -- 상품이 출고된 경우 => 재고수량 감소
+    
+    IF (:NEW.STATUS = '출고')
+        THEN
+            UPDATE TB_PRODUCT
+            SET STOCK = STOCK - :NEW.AMOUNT
+            WHERE PCODE = :NEW.PCODE;
+    END IF;
 
 
+END;
+/
 
+-- 210번 상품에 오늘 날짜로 7개 출고
+INSERT INTO TB_PRODETAIL
+VALUES(SEQ_DCODE.NEXTVAL, 210, SYSDATE, 7, '출고');
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-- 200번 상품이 오늘 날자로 100개 입고
+INSERT INTO TB_PRODETAIL
+VALUES(SEQ_DCODE.NEXTVAL, 200, SYSDATE, 100, '입고');
 
 
